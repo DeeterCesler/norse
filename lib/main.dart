@@ -99,38 +99,43 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final targetOffset = forward ? -screenWidth : screenWidth;
     final startOffset = _dragOffset;
-    final startTime = DateTime.now();
+    final startNextOffset = _nextCardOffset;
+    
+    // Add a small delay before starting the animation
+    Future.delayed(const Duration(milliseconds: 16), () {
+      final startTime = DateTime.now();
 
-    void animate() {
-      if (!_isAnimating) return;
-      
-      final elapsed = DateTime.now().difference(startTime).inMilliseconds;
-      final progress = (elapsed / 300).clamp(0.0, 1.0);
-      
-      setState(() {
-        _dragOffset = startOffset + (targetOffset - startOffset) * progress;
-        _nextCardOffset = forward ? 
-            screenWidth + (0 - screenWidth) * progress :
-            -screenWidth + (0 + screenWidth) * progress;
-      });
-
-      if (progress < 1.0) {
-        Future.delayed(const Duration(milliseconds: 16), animate);
-      } else {
+      void animate() {
+        if (!_isAnimating) return;
+        
+        final elapsed = DateTime.now().difference(startTime).inMilliseconds;
+        final progress = (elapsed / 300).clamp(0.0, 1.0);
+        
         setState(() {
-          if (forward) {
-            _flashcardService.moveToNext();
-          } else {
-            _flashcardService.moveToPrevious();
-          }
-          _dragOffset = 0.0;
-          _nextCardOffset = 0.0;
-          _isAnimating = false;
+          _dragOffset = startOffset + (targetOffset - startOffset) * progress;
+          // Keep the next card's position relative to the current card
+          _nextCardOffset = startNextOffset + (0 - startNextOffset) * progress;
         });
-      }
-    }
 
-    animate();
+        if (progress < 1.0) {
+          Future.delayed(const Duration(milliseconds: 16), animate);
+        } else {
+          // Update everything in a single setState
+          setState(() {
+            _dragOffset = 0.0;
+            _nextCardOffset = 0.0;
+            if (forward) {
+              _flashcardService.moveToNext();
+            } else {
+              _flashcardService.moveToPrevious();
+            }
+            _isAnimating = false;
+          });
+        }
+      }
+
+      animate();
+    });
   }
 
   void _animateCardChange(bool forward) {
