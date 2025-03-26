@@ -9,7 +9,7 @@ class Flashcard {
     required this.index,
   });
 
-  factory Flashcard.fromMap(Map<String, String> map, int index) {
+  factory Flashcard.fromMap(Map<String, dynamic> map, int index) {
     return Flashcard(
       norse: map['norse']!,
       english: map['english']!,

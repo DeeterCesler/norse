@@ -12,9 +12,13 @@ class FlashcardService {
   }
 
   void _initializeFlashcards() {
+    // temporarily limited to younger futhark
     _flashcards = RuneMap.runes.entries.map((entry) {
-      return Flashcard.fromMap(entry.value, int.parse(entry.key));
-    }).toList();
+      if (entry.value['era'] == 'Younger' && entry.value['subtype'].contains('Long-Branch')) {
+        return Flashcard.fromMap(entry.value, int.parse(entry.key));
+      }
+      return null;
+    }).whereType<Flashcard>().toList();
     _shuffle();
   }
 
