@@ -48,7 +48,6 @@ class RuneMap {
     '78': {'norse': 'ᛮ', 'english': ':', 'alt': 'colon', 'era': 'Medieval', 'subtype': ['punctuation']},  
     '79': {'norse': 'ᛯ', 'english': ';', 'alt': 'semicolon', 'era': 'Medieval', 'subtype': ['punctuation']},  
     '80': {'norse': 'ᛰ', 'english': '.', 'alt': 'full stop', 'era': 'Medieval', 'subtype': ['punctuation']},  
-    
   };
 }
 
