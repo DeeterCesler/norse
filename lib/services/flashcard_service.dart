@@ -14,7 +14,7 @@ class FlashcardService {
   void _initializeFlashcards() {
     // temporarily limited to younger futhark
     _flashcards = RuneMap.runes.entries.map((entry) {
-      if (entry.value['era'] == 'Younger' && entry.value['subtype'].contains('Long-Branch')) {
+      if (entry.value['era'].contains('Younger') && entry.value['subtype'].contains('Long-Branch')) {
         return Flashcard.fromMap(entry.value, int.parse(entry.key));
       }
       return null;
@@ -37,9 +37,8 @@ class FlashcardService {
     _shuffle();
   }
 
-  Flashcard get currentCard => _flashcards[_currentIndex];
-  Flashcard? get previousCard => _currentIndex > 0 ? _flashcards[_currentIndex - 1] : null;
-  Flashcard? get nextCard => _currentIndex < _flashcards.length - 1 ? _flashcards[_currentIndex + 1] : null;
+  Flashcard get currentCard => _flashcards[0];
+  Flashcard? get nextCard => _flashcards.length > 1 ? _flashcards[1] : null;
 
   bool get showNorse => _showNorse;
 
@@ -47,20 +46,11 @@ class FlashcardService {
     _showNorse = !_showNorse;
   }
 
-  void moveToNext() {
-    if (_currentIndex < _flashcards.length - 1) {
-      _currentIndex++;
+  void moveCardToBack() {
+    if (_flashcards.isNotEmpty) {
+      final card = _flashcards.removeAt(0);
+      _flashcards.add(card);
       _showNorse = true;
     }
   }
-
-  void moveToPrevious() {
-    if (_currentIndex > 0) {
-      _currentIndex--;
-      _showNorse = true;
-    }
-  }
-
-  bool get hasNext => _currentIndex < _flashcards.length - 1;
-  bool get hasPrevious => _currentIndex > 0;
 } 

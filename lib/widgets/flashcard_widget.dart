@@ -63,7 +63,7 @@ class FlashcardWidget extends StatelessWidget {
                   ..rotateY(showNorse ? 0 : pi),
                 alignment: Alignment.center,
                 child: Text(
-                  showNorse ? 'Norse' : 'English',
+                  showNorse ? 'Younger Futhark' : 'English',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
