@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:norse_flashcards/pages/character_list_page.dart';
 import 'package:norse_flashcards/pages/flashcard_page.dart';
 import 'package:norse_flashcards/pages/quiz_page.dart';
+import 'package:norse_flashcards/pages/about_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -17,6 +18,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     const CharacterListPage(),
     const FlashcardPage(),
     const QuizPage(),
+    const AboutPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -28,6 +30,15 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Image.asset(
+          'assets/images/logo.png',
+          height: 40,
+          fit: BoxFit.contain,
+        ),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        centerTitle: true,
+      ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -44,6 +55,10 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           NavigationDestination(
             icon: Icon(Icons.quiz),
             label: 'Quiz',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.info_outline),
+            label: 'About',
           ),
         ],
       ),

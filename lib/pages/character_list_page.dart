@@ -8,30 +8,33 @@ class CharacterListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final flashcards = RuneMap.runes.entries
-        .where((entry) => entry.value['era'].contains('Younger'))
+        .where((entry) => entry.value['era'].contains('Younger') && entry.value['subtype'].contains('Long-Branch'))
         .map((entry) => Flashcard.fromMap(entry.value, int.parse(entry.key)))
         .toList()
       ..sort((a, b) => a.index.compareTo(b.index));
 
     return Scaffold(
-      appBar: AppBar(
-        title: Image.asset(
-          'assets/images/logo.png',
-          height: 40, // Adjust this value to fit your logo
-          fit: BoxFit.contain,
-        ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-              child: Text(
-                'Younger Futhark',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall,
+              child: Column(
+                children: [
+                  Text(
+                    'Younger Futhark',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Text(
+                    'Long Branch',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

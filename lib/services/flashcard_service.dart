@@ -1,14 +1,20 @@
 import 'dart:math';
 import 'package:norse_flashcards/constants/dictionary.dart';
 import 'package:norse_flashcards/models/flashcard.dart';
+import 'package:norse_flashcards/pages/about_page.dart';
 
 class FlashcardService {
-  List<Flashcard> _flashcards = [];
-  int _currentIndex = 0;
-  bool _showNorse = true;
+  // Make these static to persist between tab switches
+  static List<Flashcard> _flashcards = [];
+  static int _currentIndex = 0;
+  static bool _showNorse = true;
+  static bool _isInitialized = false;
 
   FlashcardService() {
-    _initializeFlashcards();
+    if (!_isInitialized) {
+      _initializeFlashcards();
+      _isInitialized = true;
+    }
   }
 
   void _initializeFlashcards() {

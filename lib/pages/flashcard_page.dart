@@ -99,14 +99,6 @@ class _FlashcardPageState extends State<FlashcardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Image.asset(
-          'assets/images/logo.png',
-          height: 40,
-          fit: BoxFit.contain,
-        ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -159,7 +151,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 54.0),
             child: IconButton(
               onPressed: _isAnimating ? null : () {
                 setState(() {
@@ -167,6 +159,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                 });
               },
               icon: const Icon(Icons.shuffle),
+              tooltip: 'Shuffle Cards',
             ),
           ),
         ],
