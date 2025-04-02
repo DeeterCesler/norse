@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:norse_flashcards/constants/dictionary.dart';
 import 'package:norse_flashcards/models/flashcard.dart';
+import 'package:norse_flashcards/widgets/language_dropdown.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -21,6 +22,7 @@ class _QuizPageState extends State<QuizPage> {
   static Set<String> _askedRuneIds = {};
   static bool _quizComplete = false;
   static bool _isInitialized = false;  // Track if we've done initial shuffle
+  static RuneSet _selectedSet = RuneSet.youngerLongBranch;
 
   @override
   void initState() {
@@ -31,17 +33,67 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void _initializeQuiz() {
+    _updateQuizCards();
+    _isInitialized = true;
+  }
+
+  void _updateQuizCards() {
     final flashcards = RuneMap.runes.entries
         .map((entry) => Flashcard.fromMap(entry.value, int.parse(entry.key)))
         .where((card) => 
-          card.era.contains('Younger') && 
-          card.subtype.contains('Long-Branch'))
+          card.era.contains(_selectedSet.era) && 
+          (_selectedSet.subtype.isEmpty || card.subtype.contains(_selectedSet.subtype)))
         .toList();
     
     // Shuffle cards once
     _shuffledCards = List.from(flashcards)..shuffle(Random());
-    _isInitialized = true;
     _resetQuiz();
+  }
+
+  Future<void> _showLanguageChangeDialog(RuneSet newSet) async {
+    if (_totalQuestions == 0) {
+      setState(() {
+        setRuneSet(newSet);
+      });
+      return;
+    }
+
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Change Language?'),
+          content: const Text('Changing the language will reset your current quiz progress. Are you sure you want to continue?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Continue'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      setState(() {
+        setRuneSet(newSet);
+      });
+    }
+  }
+
+  void setRuneSet(RuneSet set) {
+    if (_selectedSet != set) {
+      _selectedSet = set;
+      _updateQuizCards();
+    }
   }
 
   void _resetQuiz() {
@@ -96,6 +148,37 @@ class _QuizPageState extends State<QuizPage> {
     });
   }
 
+  Widget _buildScoreTracker() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary,
+          width: 2,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.star,
+            color: Theme.of(context).colorScheme.primary,
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '$_score / $_totalQuestions',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,118 +186,116 @@ class _QuizPageState extends State<QuizPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                ElevatedButton.icon(
-                  onPressed: () => _initializeQuiz(),
-                  icon: const Icon(Icons.restart_alt),
-                  label: const Text('Reset'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(width: 8),
+                    LanguageDropdown(
+                      selectedSet: _selectedSet,
+                      onChanged: (set) {
+                        _showLanguageChangeDialog(set);
+                      },
+                    ),
+                  ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Score: $_score / $_totalQuestions',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 8),
+                _buildScoreTracker(),
               ],
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 8.0),
-                  Text(
-                    'Younger Futhark',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  if (_quizComplete) ...[
-                    Text(
-                      'Quiz Complete!',
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Final Score: $_score / $_totalQuestions',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 40),
-                    ElevatedButton(
-                      onPressed: _resetQuiz,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (_quizComplete) ...[
+                      Text(
+                        'Quiz Complete!',
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      child: const Text('Start New Quiz'),
-                    ),
-                  ] else ...[
-                    Text(
-                      _currentCard.norse,
-                      style: const TextStyle(fontSize: 120),
-                    ),
-                    const SizedBox(height: 40),
-                    if (_showAnswer) ...[
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          'Correct answer: ${_currentCard.english}',
-                          style: const TextStyle(fontSize: 24),
-                          textAlign: TextAlign.center,
-                        ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Score: $_score / $_totalQuestions',
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _loadNewQuestion();
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50),
-                          ),
-                          child: const Text('Next Question'),
-                        ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _resetQuiz();
+                          });
+                        },
+                        child: const Text('Start New Quiz'),
                       ),
                     ] else ...[
-                      ..._options.map((option) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ElevatedButton(
-                          onPressed: () => _checkAnswer(option),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50),
-                          ),
-                          child: Text(option),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 0),
+                            SizedBox(
+                              height: 150,
+                              child: Center(
+                                child: Text(
+                                  _currentCard.norse,
+                                  style: const TextStyle(fontSize: 120),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            if (_showAnswer) ...[
+                              SizedBox(
+                                width: double.infinity,
+                                child: Text(
+                                  'Correct answer: ${_currentCard.english}',
+                                  style: const TextStyle(fontSize: 24),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _loadNewQuestion();
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(double.infinity, 50),
+                                  ),
+                                  child: const Text('Next Question'),
+                                ),
+                              ),
+                            ] else ...[
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: _options.map((option) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      child: ElevatedButton(
+                                        onPressed: () => _checkAnswer(option),
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: const Size(double.infinity, 50),
+                                        ),
+                                        child: Text(option),
+                                      ),
+                                    )).toList(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-                      )),
+                      ),
                     ],
                   ],
-                ],
+                ),
               ),
             ),
           ),

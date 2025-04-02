@@ -51,7 +51,7 @@ class RuneMap {
     '41': {'norse': 'ᛘ', 'english': 'm', 'era': ['Younger', 'Medieval', 'Dalecarlian'], 'subtype': ['Long-Branch']},
     '42': {'norse': 'ᛅ', 'english': 'a', 'era': ['Younger', 'Medieval', 'Dalecarlian'], 'subtype': ['Long-Branch']},
     '43': {'norse': 'ᚼ', 'english': 'h', 'era': ['Younger', 'Dalecarlian'], 'subtype': ['Long-Branch']},
-    '44': {'norse': 'ᚬ', 'english': 'o/ǫ', 'era': ['Younger'], 'subtype': ['Long-Branch']},
+    '44': {'norse': 'ᚬ', 'english': 'ō', 'era': ['Younger'], 'subtype': ['Long-Branch']},
     '45': {'norse': 'ᛧ', 'english': 'ʀ', 'era': ['Younger'], 'subtype': ['Short-Twig']},
     '46': {'norse': 'ᛙ', 'english': 'm', 'era': ['Younger', 'Medieval'], 'subtype': ['Short-Twig']},
     '47': {'norse': 'ᛓ', 'english': 'b', 'era': ['Younger'], 'subtype': ['Short-Twig']},
@@ -60,7 +60,7 @@ class RuneMap {
     '50': {'norse': 'ᛆ', 'english': 'a', 'era': ['Younger', 'Medieval', 'Dalecarlian'], 'subtype': ['Short-Twig']},
     '51': {'norse': 'ᚿ', 'english': 'n', 'era': ['Younger', 'Medieval', 'Dalecarlian'], 'subtype': ['Short-Twig']},
     '52': {'norse': 'ᚽ', 'english': 'h', 'era': ['Younger'], 'subtype': ['Short-Twig']},
-    '53': {'norse': 'ᚭ', 'english': 'o/ǫ', 'era': ['Younger'], 'subtype': ['Short-Twig']},
+    '53': {'norse': 'ᚭ', 'english': 'ō', 'era': ['Younger'], 'subtype': ['Short-Twig']},
     
     // Medieval specific
     '54': {'norse': 'ᛪ', 'english': 'x', 'era': ['Medieval'], 'subtype': []},
@@ -79,7 +79,7 @@ class RuneMap {
     '67': {'norse': 'ᚰ', 'english': 'on', 'era': ['Medieval'], 'subtype': []},
     '68': {'norse': 'ᚯ', 'english': 'oe', 'era': ['Medieval', 'Dalecarlian'], 'subtype': []},
     '69': {'norse': 'ᚮ', 'english': 'o', 'era': ['Medieval'], 'subtype': []},
-    '70': {'norse': 'ᚧ', 'english': 'eth/ð', 'era': ['Medieval'], 'subtype': []},
+    '70': {'norse': 'ᚧ', 'english': 'eth/dh', 'era': ['Medieval'], 'subtype': []},
     '71': {'norse': 'ᚥ', 'english': 'w', 'era': ['Medieval'], 'subtype': []},
     '72': {'norse': 'ᚤ', 'english': 'y', 'era': ['Medieval'], 'subtype': []},
     '73': {'norse': 'ᚡ', 'english': 'v', 'era': ['Medieval'], 'subtype': []},

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:norse_flashcards/services/flashcard_service.dart';
 import 'package:norse_flashcards/widgets/flashcard_widget.dart';
+import 'package:norse_flashcards/widgets/language_dropdown.dart';
 
 class FlashcardPage extends StatefulWidget {
   const FlashcardPage({super.key});
@@ -10,18 +11,12 @@ class FlashcardPage extends StatefulWidget {
 }
 
 class _FlashcardPageState extends State<FlashcardPage> {
-  late final FlashcardService _flashcardService;
+  final FlashcardService _flashcardService = FlashcardService();
   double _dragOffset = 0.0;
   bool _isDragging = false;
   double _dragStartX = 0.0;
   bool _isAnimating = false;
   double _nextCardOffset = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _flashcardService = FlashcardService();
-  }
 
   void _handleDragStart(DragStartDetails details) {
     if (_isAnimating) return;
@@ -102,6 +97,23 @@ class _FlashcardPageState extends State<FlashcardPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(width: 8),
+                LanguageDropdown(
+                  selectedSet: _flashcardService.selectedSet,
+                  onChanged: (set) {
+                    setState(() {
+                      _flashcardService.setRuneSet(set);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: GestureDetector(
               onHorizontalDragStart: _handleDragStart,
@@ -125,7 +137,6 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                 _flashcardService.toggleSide();
                               });
                             },
-                            slideOffset: 0,
                           ),
                         ),
                       ),
@@ -141,7 +152,6 @@ class _FlashcardPageState extends State<FlashcardPage> {
                               _flashcardService.toggleSide();
                             });
                           },
-                          slideOffset: 0,
                         ),
                       ),
                     ),
