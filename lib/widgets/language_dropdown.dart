@@ -40,6 +40,12 @@ class LanguageDropdown extends StatelessWidget {
         child: PopupMenuButton<RuneSet>(
           initialValue: selectedSet,
           onSelected: onChanged,
+          offset: const Offset(0, 8),
+          useRootNavigator: false,
+          constraints: const BoxConstraints(minWidth: 200, maxWidth: 400),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           itemBuilder: (BuildContext context) {
             return RuneSet.values.map((RuneSet set) {
               return PopupMenuItem<RuneSet>(
@@ -55,20 +61,27 @@ class LanguageDropdown extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedSet.displayName,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
+            child: IntrinsicWidth(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      selectedSet.displayName,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
                   ),
-                ),
-                Icon(
-                  Icons.arrow_drop_down,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ],
+                  Icon(
+                    Icons.arrow_drop_down,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -76,3 +89,4 @@ class LanguageDropdown extends StatelessWidget {
     );
   }
 }
+

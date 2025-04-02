@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:norse_flashcards/models/flashcard.dart';
 
-class FlashcardWidget extends StatelessWidget {
+class FlashcardWidget extends StatefulWidget {
   final Flashcard card;
   final bool showNorse;
   final VoidCallback onTap;
@@ -17,16 +17,49 @@ class FlashcardWidget extends StatelessWidget {
   });
 
   @override
+  State<FlashcardWidget> createState() => _FlashcardWidgetState();
+}
+
+class _FlashcardWidgetState extends State<FlashcardWidget> {
+  late bool _preShowNorse;
+  late bool _showNorse;
+
+  @override
+  void initState() {
+    super.initState();
+    _preShowNorse = widget.showNorse;
+    _showNorse = widget.showNorse;
+  }
+
+  @override
+  void didUpdateWidget(FlashcardWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.showNorse != widget.showNorse) {
+      setState(() {
+        _showNorse = widget.showNorse;
+      });
+      
+      Future.delayed(const Duration(milliseconds: 150), () {
+        if (mounted) {
+          setState(() {
+            _preShowNorse = widget.showNorse;
+          });
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         transform: Matrix4.identity()
           ..setEntry(3, 2, 0.001)
-          ..translate(150.0 + slideOffset)
-          ..rotateY(showNorse ? 0 : pi)
+          ..translate(150.0 + widget.slideOffset)
+          ..rotateY(_showNorse ? 0 : pi)
           ..translate(-150.0),
         child: Container(
           width: 300,
@@ -47,12 +80,12 @@ class FlashcardWidget extends StatelessWidget {
             children: [
               Transform(
                 transform: Matrix4.identity()
-                  ..rotateY(showNorse ? 0 : pi),
+                  ..rotateY(_preShowNorse ? 0 : pi),
                 alignment: Alignment.center,
                 child: Text(
-                  showNorse ? card.norse : card.english,
+                  _preShowNorse ? widget.card.norse : widget.card.english,
                   style: TextStyle(
-                    fontSize: showNorse ? 120 : 60,
+                    fontSize: _preShowNorse ? 120 : 60,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -60,10 +93,10 @@ class FlashcardWidget extends StatelessWidget {
               const SizedBox(height: 20),
               Transform(
                 transform: Matrix4.identity()
-                  ..rotateY(showNorse ? 0 : pi),
+                  ..rotateY(_preShowNorse ? 0 : pi),
                 alignment: Alignment.center,
                 child: Text(
-                  showNorse ? 'Old Norse' : 'English',
+                  _preShowNorse ? 'Old Norse' : 'English',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
