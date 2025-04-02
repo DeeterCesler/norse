@@ -99,19 +99,15 @@ class _FlashcardPageState extends State<FlashcardPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(width: 8),
-                LanguageDropdown(
-                  selectedSet: _flashcardService.selectedSet,
-                  onChanged: (set) {
-                    setState(() {
-                      _flashcardService.setRuneSet(set);
-                    });
-                  },
-                ),
-              ],
+            child: Center( // Use Center instead of Row for perfect centering
+              child: LanguageDropdown(
+                selectedSet: _flashcardService.selectedSet,
+                onChanged: (set) {
+                  setState(() {
+                    _flashcardService.setRuneSet(set);
+                  });
+                },
+              ),
             ),
           ),
           Expanded(
